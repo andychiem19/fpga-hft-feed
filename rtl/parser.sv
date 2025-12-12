@@ -8,7 +8,7 @@ module parser (
     output  logic [7:0] packet,
     output  logic packet_valid,
     output  logic packet_end
-)
+);
 
 typedef enum logic [2:0] {
     IDLE,
