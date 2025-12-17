@@ -15,6 +15,13 @@ A personal educational project developing a low-latency FPGA Ethernet/UDP feed h
 
 ---
 
+#### **File Structure**
+
+`/src` –> Main SystemVerilog code for FPGA-side modules\
+`/tb` –> Testbenches for verifying that each module works as intended
+
+---
+
 #### **Learning Objectives**
 
 - **Ethernet Communication** – understand frame structure, MAC/IP/UDP parsing
@@ -24,10 +31,3 @@ A personal educational project developing a low-latency FPGA Ethernet/UDP feed h
 - **AXI-Stream / FPGA Pipelines** – integrate MAC output to custom RTL logic
 - **Sequence Number & Data Integrity Handling** – detect gaps, out-of-order packets, and malformed frames
 - **Integration with Trading Logic** – forward processed payloads to FPGA-based order book or simulator
-
----
-
-#### **File Structure**
-
-`/rtl` –> Main SystemVerilog code for FPGA-side modules\
-`/tb` –> Modular testbenches for verifying that each module works as intended
