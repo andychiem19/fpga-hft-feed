@@ -19,16 +19,25 @@ typedef enum logic [2:0] {
     ERROR
 } parser_state;
 
-parser_state state;
-
 // add necessary registers here
 logic [2:0] preamble_count;
+logic [3:0] eth_count;
+
+typedef struct packed {
+    logic [15:0] ethertype;
+    int unsigned ipbytes;
+    int unsigned udpbytes;
+} protocol_t;
+
+parser_state state;
+protocol_t protocol;
 
 // main parser FSM
-always_ff(@posedge clk or negedge rst_n) begin
-    if !(rst_n) begin
+always_ff @(posedge clk or negedge rst_n) begin
+    if (!rst_n) begin
         state <= IDLE;
         preamble_count <= 0;
+        eth_count <= 0
     end 
     
     else begin
@@ -59,6 +68,26 @@ always_ff(@posedge clk or negedge rst_n) begin
             end
 
             READ_ETH: begin
+                if (tvalid) begin
+                    eth_count <= eth_count + 1;
+
+                    if (eth_count == 12) begin // Reads ethertype bytes for next state info
+                        protocol.ethertype[15:8] <= tdata;
+                    end
+
+                    if (eth_count == 13) begin
+                        protocol.ethertype[7:0] <= tdata;
+                        eth_count <= 0;
+
+                        if (protocol.ethertype == 16'h0800) begin // IPv4 protocol
+                            protocol.ipbytes <= 20;
+                        end else begin
+                            protocol.ipbytes <= 0;
+                        end
+
+                        state <= READ_IP;
+                    end
+                end
             end
 
             READ_IP: begin
